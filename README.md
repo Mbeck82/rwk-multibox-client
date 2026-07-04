@@ -1,6 +1,6 @@
 # rwk-multibox-client
 
-A GM-sanctioned **multiboxing client** for Race War Kingdoms (RWK). One controller
+A **multiboxing client** for Race War Kingdoms (RWK). One controller
 window manages a character vault and spawns child game windows; a fleet hotkey pad
 broadcasts RWK's **built-in** keybinds to every child at once.
 
