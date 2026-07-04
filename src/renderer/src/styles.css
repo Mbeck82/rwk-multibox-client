@@ -1,0 +1,434 @@
+:root {
+  --bg: #14161a;
+  --bg-panel: #1d2026;
+  --bg-inset: #171a1f;
+  --border: #2c313a;
+  --text: #d7dbe2;
+  --text-dim: #8b93a1;
+  --accent: #4f8fdd;
+  --accent-soft: #2b4a70;
+  --ok: #58b368;
+  --warn: #d9a441;
+  --error: #d96459;
+  font-size: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.app-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.app-sub {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.status-message {
+  margin-left: auto;
+  font-size: 0.85rem;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tone-ok {
+  color: var(--ok);
+}
+.tone-error {
+  color: var(--error);
+}
+.tone-info {
+  color: var(--text-dim);
+}
+
+.app-main {
+  display: grid;
+  grid-template-columns: minmax(340px, 1fr) minmax(400px, 1.2fr);
+  gap: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.panel-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+button {
+  background: var(--bg-inset);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+button.primary {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+button.danger:hover:not(:disabled) {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+button.ghost {
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+}
+
+input[type="text"],
+input[type="password"],
+textarea,
+select {
+  background: var(--bg-inset);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+  font-family: Consolas, monospace;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus-visible {
+  outline: 1px solid var(--accent);
+}
+
+/* ----- Vault ----- */
+
+.character-list,
+.fleet-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.character-row,
+.fleet-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.character-info,
+.fleet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.character-label {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.character-sub {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ok);
+  display: inline-block;
+}
+
+.character-actions {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.empty-hint {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+/* ----- Editor ----- */
+
+.editor {
+  background: var(--bg-inset);
+  border: 1px solid var(--accent-soft);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+
+.editor-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.password-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* ----- Import / export ----- */
+
+.import-export {
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.import-export summary {
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.import-block {
+  margin-top: 10px;
+}
+
+.import-block h3 {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.import-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.import-actions select {
+  width: auto;
+}
+
+/* ----- Fleet ----- */
+
+.fleet-broadcast {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.fleet-server {
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.fleet-status {
+  font-size: 0.8rem;
+}
+
+.fleet-detail {
+  color: var(--text-dim);
+}
+
+.status-loading,
+.status-logging-in {
+  color: var(--warn);
+}
+
+.status-logged-in {
+  color: var(--ok);
+}
+
+.status-login-failed {
+  color: var(--error);
+}
+
+.status-manual {
+  color: var(--text-dim);
+}
+
+/* ----- Hotkey pad ----- */
+
+.leader-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.target-count {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+.capture-zone {
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 14px;
+  text-align: center;
+  color: var(--text-dim);
+  cursor: pointer;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.capture-zone.armed {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--bg-inset);
+}
+
+.last-sent {
+  color: var(--ok);
+  font-size: 0.8rem;
+}
+
+.hotkey-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hotkey-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hotkey-group-label {
+  width: 140px;
+  flex-shrink: 0;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+.hotkey-buttons {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.hotkey-btn {
+  min-width: 34px;
+  font-family: Consolas, monospace;
+  font-weight: 600;
+}
+
+.hotkey-note {
+  margin: 10px 0 0;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
