@@ -1,6 +1,6 @@
 {
   "name": "rwk-multibox-client",
-  "version": "1.0",
+  "version": "1.0.0",
   "private": true,
   "license": "Unlicense",
   "description": "GM-sanctioned multiboxing client for Race War Kingdoms: character vault, controller + child client windows, fleet hotkey broadcast of built-in RWK keybinds. No automation.",
