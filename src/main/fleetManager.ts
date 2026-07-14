@@ -283,6 +283,9 @@ export class FleetManager {
       }
 
       if (!this.leaderMode) return;
+      // A broadcast-disabled window is detached from the fleet in BOTH directions: it
+      // must not mirror its own keystrokes out either, so you can hand-control it solo.
+      if (!record.broadcastEnabled) return;
       if (input.isAutoRepeat || input.control || input.alt || input.meta) return;
       const hotkey = findHotkeyForKeyboardEvent(input.key, input.code);
       if (!hotkey) return;

@@ -432,7 +432,7 @@ function FleetPanel({ fleet, report }: { fleet: FleetSnapshot; report(status: St
       <ul className="fleet-list">
         {fleet.children.map((child) => (
           <li key={child.id} className="fleet-row">
-            <label className="fleet-broadcast" title="Include this window in hotkey broadcasts">
+            <label className="fleet-broadcast" title="Include this window in the fleet — uncheck to detach it (no hotkeys sent or received) and control it by hand">
               <input
                 type="checkbox"
                 checked={child.broadcastEnabled}
