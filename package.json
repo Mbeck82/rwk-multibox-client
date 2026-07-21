@@ -10,7 +10,7 @@
     "dev": "electron-vite dev",
     "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit",
     "build": "electron-vite build",
-    "test": "tsx --test tests/characterImportExport.test.ts tests/hotkeys.test.ts tests/characterStore.test.ts tests/parentVaultImport.test.ts",
+    "test": "tsx --test tests/characterImportExport.test.ts tests/hotkeys.test.ts tests/characterStore.test.ts tests/parentVaultImport.test.ts tests/pageScripts.test.ts",
     "dist": "node scripts/dist.cjs",
     "clean:release": "node -e \"require('fs').rmSync('release-rwk-multibox',{recursive:true,force:true})\""
   },

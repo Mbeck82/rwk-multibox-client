@@ -14,7 +14,8 @@ export interface MboxApi {
   getVaultSnapshot(): Promise<VaultSnapshot>;
   createCharacterTemplate(): Promise<ManagedCharacter>;
   saveCharacter(character: ManagedCharacter): Promise<ManagedCharacter>;
-  deleteCharacter(characterId: string): Promise<VaultSnapshot>;
+  /** Prompts for confirmation in the main process; resolves to the new vault, or null if cancelled. */
+  deleteCharacter(characterId: string): Promise<VaultSnapshot | null>;
   importNamePasswordLines(text: string, rwkServer: RwkServerId): Promise<BulkImportNamePasswordResult>;
   importCharactersJson(jsonText: string): Promise<BulkImportJsonResult>;
   /** Opens a file dialog for an RWK Client `character-vault.json`. Null when cancelled. */

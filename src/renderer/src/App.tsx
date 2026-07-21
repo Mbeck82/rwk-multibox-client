@@ -15,6 +15,7 @@ import type {
   VaultSnapshot
 } from "../../shared/types";
 import { RWK_SERVER_IDS } from "../../shared/types";
+import { HelpPanel } from "./HelpPanel";
 
 type StatusTone = "info" | "ok" | "error";
 
@@ -170,9 +171,10 @@ function VaultPanel({ vault, fleet, report }: VaultPanelProps): React.JSX.Elemen
 
   const remove = useCallback(
     async (character: ManagedCharacter) => {
-      if (!window.confirm(`Delete "${character.label}"? This cannot be undone.`)) return;
       try {
-        await window.mbox.deleteCharacter(character.id);
+        // Confirmation happens in the main process (window-parented dialog); null = cancelled.
+        const result = await window.mbox.deleteCharacter(character.id);
+        if (result === null) return;
         report({ tone: "ok", text: `Deleted "${character.label}".` });
       } catch (error) {
         report({ tone: "error", text: errorText(error) });
@@ -593,6 +595,22 @@ function HotkeyPad({ fleet, report }: { fleet: FleetSnapshot; report(status: Sta
 export default function App(): React.JSX.Element {
   const { vault, fleet } = useMboxSnapshots();
   const [status, setStatus] = useState<StatusMessage | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
+
+  // F1 toggles the help overlay from the controller window; Esc closes it. (F1 is the universal
+  // help key and is unused by both the RWK game — which binds no function keys — and the RWK Client.)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.key === "F1") {
+        e.preventDefault();
+        setShowHelp((v) => !v);
+      } else if (e.key === "Escape") {
+        setShowHelp(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
     <div className="app">
@@ -602,6 +620,14 @@ export default function App(): React.JSX.Element {
           {vault.characters.length} character(s) · {fleet.children.length} window(s)
         </span>
         {status && <span className={`status-message tone-${status.tone}`}>{status.text}</span>}
+        <button
+          type="button"
+          className="ghost help-open-btn"
+          title="Game help (F1) — searchable offline guides: quests, beasts, crafting, special locations."
+          onClick={() => setShowHelp((v) => !v)}
+        >
+          📖 Help
+        </button>
       </header>
       <main className="app-main">
         <div className="column">
@@ -612,6 +638,21 @@ export default function App(): React.JSX.Element {
           <FleetPanel fleet={fleet} report={setStatus} />
         </div>
       </main>
+      {showHelp && (
+        <div className="help-overlay" role="dialog" aria-modal="true" aria-label="RWK game help">
+          <div className="help-overlay-panel">
+            <header className="help-overlay-header">
+              <h2>Game Help</h2>
+              <button type="button" className="ghost" onClick={() => setShowHelp(false)}>
+                Close ✕
+              </button>
+            </header>
+            <div className="help-overlay-body">
+              <HelpPanel />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

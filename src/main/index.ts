@@ -106,8 +106,28 @@ function registerIpcHandlers(): void {
     broadcastVaultSnapshot();
     return saved;
   });
-  ipcMain.handle("vault:delete", (_event, characterId: string) => {
-    const snapshot = characterStore.deleteCharacter(String(characterId));
+  // Confirm here in the main process, not with the renderer's window.confirm(): a
+  // renderer-invoked confirm()/alert() leaves the controller window unable to receive
+  // mouse/keyboard input on Windows once other top-level fleet windows exist (Electron
+  // focus-restore bug) — the whole panel goes dead until restart. A window-parented
+  // dialog.showMessageBox doesn't have that problem.
+  ipcMain.handle("vault:delete", async (event, characterId: string) => {
+    const id = String(characterId);
+    const label = characterStore.getCharacter(id)?.label ?? "this character";
+    const parent = BrowserWindow.fromWebContents(event.sender);
+    const options: Electron.MessageBoxOptions = {
+      type: "warning",
+      buttons: ["Cancel", "Delete"],
+      defaultId: 0,
+      cancelId: 0,
+      message: `Delete "${label}"?`,
+      detail: "This cannot be undone."
+    };
+    const { response } = parent
+      ? await dialog.showMessageBox(parent, options)
+      : await dialog.showMessageBox(options);
+    if (response !== 1) return null; // cancelled
+    const snapshot = characterStore.deleteCharacter(id);
     broadcastVaultSnapshot();
     return snapshot;
   });

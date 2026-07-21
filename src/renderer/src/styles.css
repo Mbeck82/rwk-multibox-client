@@ -10,6 +10,13 @@
   --ok: #58b368;
   --warn: #d9a441;
   --error: #d96459;
+  /* HelpPanel is ported verbatim from RWK Client and reads --rwk-* tokens. */
+  --rwk-bg-panel: var(--bg-inset);
+  --rwk-border: var(--border);
+  --rwk-border-soft: var(--border);
+  --rwk-text: var(--text);
+  --rwk-text-muted: var(--text-dim);
+  --rwk-accent: var(--accent);
   font-size: 14px;
 }
 
@@ -431,4 +438,63 @@ button:focus-visible {
   color: var(--text-dim);
   font-size: 0.8rem;
   line-height: 1.4;
+}
+
+/* ----- Help overlay (HelpPanel port) ----- */
+
+.help-open-btn {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+/* HelpPanel classes it expects from the host chrome. */
+.hint {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.settings-tab--active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  padding: 24px;
+}
+
+.help-overlay-panel {
+  margin: auto;
+  width: min(1000px, 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.help-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.help-overlay-header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.help-overlay-body {
+  padding: 14px;
+  overflow-y: auto;
+  flex: 1;
 }

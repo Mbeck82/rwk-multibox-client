@@ -219,6 +219,31 @@ const KEY_DISPATCH_SRC = `(rawKeyCode) => {
   const target = doc.body || doc.documentElement;
   if (!target) return { ok: false, reason: "no-body" };
 
+  // The game's own da()/ka() guard drops every hotkey except Esc while an input/select
+  // holds focus. The general/kingdom menus ARE <select>s — "submit selected action" — so
+  // once a window has picked an item to burn, that menu keeps focus and swallows every
+  // hotkey we dispatch, including the submit that would clear it. Nothing in the client
+  // ever dropped that focus, so the window sat there stuck until someone hit Esc by hand.
+  // Fights never hit this: a/c/d/f leave focus on the body.
+  // Chat is left alone (focus there is deliberate), and so are the focus hotkeys
+  // Esc/Enter/'/', whose entire job is moving focus.
+  let blurred = 0;
+  if (rawKeyCode !== 27 && rawKeyCode !== 13 && rawKeyCode !== 191) {
+    for (const d of docs) {
+      try {
+        const el = d.activeElement;
+        if (!el || el.id === "chattybox") continue;
+        const tag = (el.tagName || "").toLowerCase();
+        // iframe/frame too: focus inside a subframe shows up as the frame element here.
+        if (tag !== "input" && tag !== "select" && tag !== "textarea" && tag !== "iframe" && tag !== "frame") continue;
+        if (typeof el.blur === "function") {
+          el.blur();
+          blurred++;
+        }
+      } catch (err) {}
+    }
+  }
+
   const fire = (type) => {
     const ev = new KeyboardEvent(type, { bubbles: true, cancelable: true });
     Object.defineProperty(ev, "keyCode", { get: () => rawKeyCode });
@@ -227,7 +252,7 @@ const KEY_DISPATCH_SRC = `(rawKeyCode) => {
   };
   fire("keydown");
   fire("keyup");
-  return { ok: true };
+  return { ok: true, blurred };
 }`;
 
 export function buildHotkeyDispatchScript(rawKeyCode: number): string {
@@ -254,7 +279,17 @@ export const CHAT_FOCUS_PROBE_SCRIPT = `(() => {
       if (el.id === "chattybox" || el.id === "StoreIframe") return true;
       const tag = (el.tagName || "").toLowerCase();
       if (tag === "iframe" || tag === "frame") continue;
-      if (tag === "input" || tag === "select" || tag === "textarea") return true;
+      if (tag === "textarea") return true;
+      // A <select> is NOT text entry — keystrokes there never become chat. Counting it
+      // as "typing" muted leader mode entirely during item burn: the general/kingdom
+      // action menus are selects, so the moment the leader picked an item to burn, the
+      // submit hotkey stopped mirroring to the fleet and never resumed.
+      if (tag === "input") {
+        const t = (el.type || "text").toLowerCase();
+        if (t !== "submit" && t !== "button" && t !== "image" && t !== "reset" && t !== "checkbox" && t !== "radio") {
+          return true;
+        }
+      }
     } catch (err) {}
   }
   return false;
